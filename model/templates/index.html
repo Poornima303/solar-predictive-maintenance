@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Solar Predictive Maintenance Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7f6;
+            color: #222;
+        }
+
+        /* HEADER */
+        .header {
+            background: #12372a;
+            color: white;
+
+            
+            padding: 28px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        /* STAT CARDS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card h2 {
+            color: #287b5c;
+            font-size: 27px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* CARD */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #12372a;
+        }
+
+        /* INPUT GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 7px;
+            font-size: 14px;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #287b5c;
+        }
+
+        /* BUTTON */
+        .button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #287b5c;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #1f6249;
+        }
+
+        /* RESULT */
+        .result {
+            text-align: center;
+            padding: 25px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .result-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-size: 25px;
+            margin-bottom: 10px;
+        }
+
+        .result-text {
+            font-size: 15px;
+            font-weight: normal;
+        }
+
+        .result.normal {
+            background: #e8f7ee;
+            border: 2px solid #2e8b57;
+        }
+
+        .result.normal .result-title {
+            color: #207044;
+        }
+
+        .result.maintenance {
+            background: #fff1e8;
+            border: 2px solid #e67e22;
+        }
+
+        .result.maintenance .result-title {
+            color: #c45d08;
+        }
+
+        /* RESULT DETAILS */
+        .result-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .detail-box {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .detail-box h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .detail-box p {
+            font-size: 22px;
+            font-weight: bold;
+            color: #12372a;
+        }
+
+        /* ERROR */
+        .error {
+            background: #ffeaea;
+            color: #b00020;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* INFORMATION */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #f7faf8;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            margin-bottom: 8px;
+            color: #287b5c;
+        }
+
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 700px) {
+
+            .stats,
+            .grid,
+            .result-details,
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+        .alert-box {
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.alert-high {
+    background: #ffe5e5;
+    border: 2px solid #e53935;
+    color: #b71c1c;
+}
+
+.alert-medium {
+    background: #fff3cd;
+    border: 2px solid #f0ad00;
+    color: #8a5a00;
+}
+
+.alert-low {
+    background: #e8f7ee;
+    border: 2px solid #2e8b57;
+    color: #207044;
+}
+
+.action-text {
+    margin-top: 8px;
+    font-weight: normal;
+}
+.alert-box {
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.alert-box.danger {
+    background: #ffdddd;
+    color: #b00020;
+}
+
+.alert-box.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.alert-box.success {
+    background: #ddffdd;
+    color: #176b1c;
+}
+    </style>
+</head>
+
+
+<body>
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>☀️ Solar Predictive Maintenance</h1>
+
+        <p>
+            AI-Based Low Generation Anomaly Detection System
+        </p>
+
+    </div>
+
+
+    <div class="container">
+
+
+        <!-- DASHBOARD STATISTICS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">📊</div>
+
+                <h2>161K+</h2>
+
+                <p>Dataset Records</p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">🎯</div>
+
+                <h2>99.94%</h2>
+
+                <p>Model Accuracy</p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">🤖</div>
+
+                <h2>Random Forest</h2>
+
+                <p>Machine Learning Algorithm</p>
+
+            </div>
+
+        </div>
+
+
+        <!-- PREDICTION INPUT -->
+
+        <div class="card">
+
+            <h2>📊 Solar System Parameters</h2>
+
+
+            <form method="POST">
+
+                <div class="grid">
+
+
+                    <div class="input-group">
+
+                        <label>GSP ID</label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            name="gsp_id"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Previous Generation (MW)</label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            name="previous_generation"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Previous Generation - 2 (MW)</label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            name="previous_generation_2"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Previous Generation - 3 (MW)</label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            name="previous_generation_3"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Lower Confidence Limit (MW)</label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            name="lcl_mw"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Upper Confidence Limit (MW)</label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            name="ucl_mw"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Installed Capacity (MWp)</label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            name="installedcapacity_mwp"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Capacity (MWp)</label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            name="capacity_mwp"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Hour</label>
+
+                        <input
+                            type="number"
+                            name="hour"
+                            min="0"
+                            max="23"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Day</label>
+
+                        <input
+                            type="number"
+                            name="day"
+                            min="1"
+                            max="31"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Month</label>
+
+                        <input
+                            type="number"
+                            name="month"
+                            min="1"
+                            max="12"
+                            required
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+                <button
+                    class="button"
+                    type="submit"
+                >
+
+                    🔍 Predict Maintenance Status
+
+                </button>
+
+
+            </form>
+
+        </div>
+
+
+        <!-- ERROR MESSAGE -->
+
+        {% if error %}
+
+        <div class="card">
+
+            <div class="error">
+
+                ⚠️ {{ error }}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- PREDICTION RESULT -->
+
+        {% if prediction %}
+
+        <div class="card">
+
+            <h2>🤖 Prediction Result</h2>
+
+
+            {% if prediction == "Maintenance Required" %}
+
+            <div class="result maintenance">
+
+                <div class="result-icon">
+                    ⚠️
+                </div>
+
+                <div class="result-title">
+                    Maintenance Required
+                </div>
+
+                <div class="result-text">
+
+                    Low generation anomaly detected.
+                    Please inspect the solar system.
+
+                </div>
+
+            </div>
+
+
+            {% else %}
+
+            <div class="result normal">
+
+                <div class="result-icon">
+                    ✅
+                </div>
+
+                <div class="result-title">
+                    System Normal
+                </div>
+
+                <div class="result-text">
+
+                    No maintenance anomaly detected.
+                    Solar generation condition looks normal.
+
+                </div>
+
+            </div>
+
+            {% endif %}
+            {% if alert_message %}
+<div class="alert-box {{ alert_type }}">
+    {{ alert_message }}
+</div>
+{% endif %}
+
+
+            <!-- PROBABILITY + RISK -->
+
+            <div class="result-details">
+
+
+                <div class="detail-box">
+
+                    <h3>
+                       📊 Maintenance Probability
+                    </h3>
+
+                    <p>
+                        {{ probability }}%
+                    </p>
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <h3>
+                       ⚠️ Risk Level
+                    </h3>
+
+                    <p>
+                        {{ risk_level }}
+                    </p>
+
+                </div>
+                <div class="detail-box">
+<h3>📉 Energy Loss</h3>
+<p>{{ energy_loss }}%</p>
+
+</div>
+<div class="detail-box">
+    <h3>❤️ Equipment Health</h3>
+    <p>{{ health_score }}%</p>
+    <small>{{ health_status }}</small>
+</div>
+<div class="detail-box">
+    <h3>📊 Performance Analysis</h3>
+    <p>{{ performance_percentage }}%</p>
+    <small>{{ performance_status }}</small>
+</div>
+            <div class="detail-box">
+    <h3>💰 Estimated Maintenance Cost</h3>
+    <p>₹{{ maintenance_cost }}</p>
+    <small>Based on predicted maintenance risk</small>
+</div>
+            
+            {% if reason %}
+            
+
+<div class="result-details">
+
+    <div class="detail-box">
+
+        <h3>🔍 Why this prediction?</h3>
+
+        <p style="font-size:15px; font-weight:normal;">
+            {{ reason }}
+        </p>
+
+    </div>
+
+
+    <div class="detail-box">
+
+        <h3>🛠️ Recommended Action</h3>
+
+        <p style="font-size:15px; font-weight:normal;">
+            {{ recommendation }}
+        </p>
+
+    </div>
+
+</div>
+
+{% endif %}
+            {% if risk_level == "HIGH RISK" %}
+
+<div class="alert-box alert-high">
+
+    🚨 MAINTENANCE ALERT
+
+    <div class="action-text">
+        High maintenance risk detected.
+        Please inspect the solar system immediately.
+    </div>
+
+</div>
+
+{% elif risk_level == "MEDIUM RISK" %}
+
+<div class="alert-box alert-medium">
+
+    ⚠️ WARNING ALERT
+
+    <div class="action-text">
+        Moderate maintenance risk detected.
+        System inspection is recommended.
+    </div>
+
+</div>
+
+{% else %}
+
+<div class="alert-box alert-low">
+
+    ✅ SYSTEM STATUS NORMAL
+
+    <div class="action-text">
+        No immediate maintenance action is required.
+    </div>
+
+</div>
+
+{% endif %}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- SYSTEM INFORMATION -->
+
+        <div class="card">
+
+            <h2>📌 System Information</h2>
+
+
+            <div class="info-grid">
+
+
+                <div class="info-box">
+
+                    <h3>Dataset</h3>
+
+                    <p>
+                        Solar Power Generation Data
+                    </p>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <h3>ML Model</h3>
+
+                    <p>
+                        Random Forest Classifier
+                    </p>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <h3>Purpose</h3>
+
+                    <p>
+                        Early Maintenance Detection
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <footer>
+
+        Solar Power Predictive Maintenance System
+
+    </footer>
+    {% if risk_level == "HIGH RISK" %}
+
+<script>
+    alert(
+        "🚨 MAINTENANCE ALERT!\n\n" +
+        "High maintenance risk detected.\n" +
+        "Please inspect the solar system immediately."
+    );
+</script>
+
+{% elif risk_level == "MEDIUM RISK" %}
+
+<script>
+    alert(
+        "⚠️ WARNING!\n\n" +
+        "Moderate maintenance risk detected.\n" +
+        "System inspection is recommended."
+    );
+</script>
+# ALERT SYSTEM
+if probability >= 70:
+    alert_message = "🚨 ALERT: High maintenance risk detected!"
+    alert_type = "danger"
+
+elif probability >= 40:
+    alert_message = "⚠️ WARNING: Moderate maintenance risk detected."
+    alert_type = "warning"
+
+else:
+    alert_message = "✅ NORMAL: Solar system is operating normally."
+    alert_type = "success"
+
+{% endif %}
+
+
+</body>
+
+</html>
